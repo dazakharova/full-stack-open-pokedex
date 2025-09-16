@@ -7,7 +7,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['.eslintrc.js', 'app.js', 'webpack.config.js', 'scripts/**/*.js'],
+      files: ['.eslintrc.js', 'app.js', 'webpack.config.js', 'scripts/**/*.js', 'playwright.config.js'],
       env: { node: true },
       rules: {
         'no-console': 'off', // optional, if you want console allowed in server/config
@@ -24,6 +24,11 @@ module.exports = {
     },
     ecmaVersion: 2018,
     sourceType: 'module'
+  },
+  settings: {
+    react: {
+      version: 'detect'
+    }
   },
   plugins: [
     'react', 'jest'
