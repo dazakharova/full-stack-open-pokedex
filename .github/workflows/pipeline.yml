@@ -25,3 +25,11 @@ jobs:
         run: npx playwright install --with-deps
       - name: Playwright tests
         run: npm run test:e2e
+
+  deploy:
+    needs: simple_deployment_pipeline
+    if: ${{ success() && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deployment
+        run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
