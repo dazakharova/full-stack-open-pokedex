@@ -8,8 +8,6 @@ on:
     branches: [ main ]
     types: [ opened, synchronize ]
 
-env:
-  CONDITION: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
 
 jobs:
   simple_deployment_pipeline:
@@ -34,7 +32,7 @@ jobs:
 
   deploy:
     needs: simple_deployment_pipeline
-    if: ${{ env.CONDITION == 'true' }}
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     runs-on: ubuntu-latest
     steps:
       - name: Trigger deployment
@@ -42,7 +40,7 @@ jobs:
 
   tag_release:
     needs: deploy
-    if: ${{ env.CONDITION == 'true' }}
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     permissions:
       contents: write
     runs-on: ubuntu-latest
