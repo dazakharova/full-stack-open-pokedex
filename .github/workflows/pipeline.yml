@@ -29,6 +29,20 @@ jobs:
         run: npx playwright install --with-deps
       - name: Playwright tests
         run: npm run test:e2e
+      - name: Notify build failure
+        if: failure()
+        uses: rjstone/discord-webhook-notify@v2
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          severity: error
+          title: "Build failed"
+          description: |
+            commit ${{ github.event.head_commit.url }} by ${{ github.actor }} broke the build :(
+          details: |
+            Repo: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Message: ${{ github.event.head_commit.message }}
+            Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   deploy:
     needs: simple_deployment_pipeline
@@ -37,6 +51,17 @@ jobs:
     steps:
       - name: Trigger deployment
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.API_RENDER_KEY }}
+      - name: Notify deployment success
+        if: success()
+        uses: rjstone/discord-webhook-notify@v2
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          severity: info
+          title: "A new version Pokedex deployed"
+          description: |
+            to ${{ vars.RENDER_URL }} by ${{ github.actor }}
+          footer: "Severity: informational"
+
 
   tag_release:
     needs: deploy
