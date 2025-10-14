@@ -29,13 +29,12 @@ jobs:
         run: npx playwright install --with-deps
       - name: Playwright tests
         run: npm run test:e2e
-      - name: Notify build failure
+      - name: Notify failure
         if: failure()
-        uses: appleboy/discord-action@v1.2.0
+        uses: sarisia/actions-status-discord@v1
         with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: "Build failed"
-
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "Build failed"
   deploy:
     needs: simple_deployment_pipeline
     if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
@@ -43,12 +42,12 @@ jobs:
     steps:
       - name: Trigger deployment
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.API_RENDER_KEY }}
-      - name: Notify deployment success
+      - name: Notify success
         if: success()
-        uses: appleboy/discord-action@v1.2.0
+        uses: sarisia/actions-status-discord@v1
         with:
-          webhook_url: ${{ secrets.DISCORD_WEBHOOK }}
-          message: "A new version Pokedex deployed"
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "A new version of Pokedex deployed"
 
 
   tag_release:
