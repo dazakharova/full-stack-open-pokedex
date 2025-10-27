@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - '**'
+      - main
   schedule:
     - cron: "0 3 * * *"
 
@@ -19,4 +19,3 @@ jobs:
           max-attempts: 2
           retry-delay: 10s
           retry-all: true
-
